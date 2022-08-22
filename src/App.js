@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Hero from './components/Hero';
+import Rate from './components/Rate';
 
 import './index.scss';
 
@@ -65,6 +66,7 @@ function App() {
         handleSelectCurrency={setCurrencySecond}
         handleReturnValue={handleSecondPrice}
       />
+      <Rate />
     </div>
   );
 }
