@@ -1,23 +1,23 @@
 import React from 'react';
 
-const defaultCurrency = ['UAH', 'USD', 'EUR'];
+const defCurrency = ['UAH', 'USD', 'EUR', 'PLN'];
 
-const Hero = ({ value, currency, onChangeValue, onChangeCurrency }) => {
+const Hero = ({ value, currency, handleReturnValue, handleSelectCurrency }) => {
   return (
     <div className='hero'>
       <ul className='currency'>
-        {defaultCurrency.map((cur) => (
+        {defCurrency.map((it) => (
           <li
-            onClick={() => onChangeCurrency(cur)}
-            className={currency === cur ? 'active' : ''}
-            key={cur}
+            onClick={() => handleSelectCurrency(it)}
+            className={currency === it ? 'active' : ''}
+            key={it}
           >
-            {cur}
+            {it}
           </li>
         ))}
       </ul>
       <input
-        onChange={(e) => onChangeValue(e.target.value)}
+        onChange={(el) => handleReturnValue(el.target.value)}
         value={value}
         type='number'
         placeholder={0}

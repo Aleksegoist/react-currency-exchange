@@ -1,52 +1,72 @@
-
 import { useEffect, useRef, useState } from 'react';
 import Hero from './components/Hero';
+
 import './index.scss';
 
 function App() {
+  const [currencyFirst, setCurrencyFirst] = useState('UAH');
+  const [currencySecond, setCurrencySecond] = useState('USD');
+  const [firstPrice, setFirstPrice] = useState(0);
+  const [secondPrice, setSecondPrice] = useState(1);
 
-  const [currencyFrom, setCurrencyFrom] = useState('UAH')
-  const [currencyTo, setCurrencyTo] = useState('USD')
-  const [fromItem, setFromItem] = useState(0)
-  const [toItem, setToItem] = useState(1)
-  // const [rates, setRates] = useState({})
+  // const [rates, setRates] = useState({});
 
-  const ratesRef = useRef({})
+  const ratesRef = useRef({});
 
   useEffect(() => {
-    fetch('https://cdn.cur.su/api/latest.json')
-      .then((res) => res.json()).then((json) => {
+    fetch('https://cdn.cur.su/api/nbu.json')
+      .then((res) => res.json())
+      .then((json) => {
         // setRates(json.rates);
         ratesRef.current = json.rates;
-        onChahgeToCurrency(1)
-      }).catch((error) => {
-        console.warn(error);
-        alert('Не вдалось завантажити інформацію')
+        handleSecondPrice(1);
       })
-  }, [])
+      .catch((err) => {
+        console.log(err);
+        alert('No data');
+      });
+  }, []);
 
-  const onChahgeFromCurrency = (value) => {
-    const item = value / ratesRef.current[currencyFrom];
-    const result = item * ratesRef.current[currencyTo];
-    setToItem(result.toFixed(2))
-    setFromItem(value)
-  }
+  const handleFirstPrice = (value) => {
+    const price = value / ratesRef.current[currencyFirst];
+    const result = price * ratesRef.current[currencySecond];
 
-  const onChahgeToCurrency = (value) => {
-    const result = (ratesRef.current[currencyFrom] / ratesRef.current[currencyTo]) * value;
-    setFromItem(result.toFixed(2))
-    setToItem(value)
+    setSecondPrice(result.toFixed(1));
+    setFirstPrice(value);
+  };
 
-  }
+  const handleSecondPrice = (value) => {
+    const result =
+      (ratesRef.current[currencyFirst] / ratesRef.current[currencySecond]) *
+      value;
+    setFirstPrice(result.toFixed(1));
+    setSecondPrice(value);
+  };
 
-  useEffect(() => { onChahgeFromCurrency(fromItem) }, [currencyFrom])
+  useEffect(() => {
+    handleFirstPrice(firstPrice);
+  }, [currencyFirst]);
 
-  useEffect(() => { onChahgeToCurrency(toItem) }, [currencyTo])
+  useEffect(() => {
+    handleSecondPrice(secondPrice);
+  }, [currencySecond]);
 
-  return <div className='App'>
-    <Hero value={fromItem} currency={currencyFrom} onChangeCurrency={setCurrencyFrom} onChangeValue={onChahgeFromCurrency} />
-    <Hero value={toItem} currency={currencyTo} onChangeCurrency={setCurrencyTo} onChangeValue={onChahgeToCurrency} />
-  </div>;
+  return (
+    <div className='App'>
+      <Hero
+        value={firstPrice}
+        currency={currencyFirst}
+        handleSelectCurrency={setCurrencyFirst}
+        handleReturnValue={handleFirstPrice}
+      />
+      <Hero
+        value={secondPrice}
+        currency={currencySecond}
+        handleSelectCurrency={setCurrencySecond}
+        handleReturnValue={handleSecondPrice}
+      />
+    </div>
+  );
 }
 
 export default App;
